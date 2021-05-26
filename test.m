@@ -1,7 +1,7 @@
 %{
 This is an implementation of the model described by Dupuy and Fivel
 
-Implementation for a Lomer Cotrell Lock
+Implementation for a Lomer Lock
 %}
 
 clc; clear;
@@ -27,7 +27,7 @@ dforcedtheta = @(Psi_c, Phi, b, nu) dEnergydTheta(Psi_c - Phi, b, nu) .* cos(Psi
 
 f = @(Psi_c, Phi_1, Phi_2, Phi_3, b_1, b_2, b_3, nu) force(Psi_c, Phi_1, b_1, nu) + ...
     force(Psi_c, Phi_2, b_2, nu) - ...
-    force(0.0, Phi_3, b_2, nu);
+    force(0.0, Phi_3, b_3, nu);
 
 
 dfdTheta = @(Psi_c, Phi_1, Phi_2, Phi_3, b_1, b_2, b_3, nu) ...
@@ -39,33 +39,31 @@ dfdTheta = @(Psi_c, Phi_1, Phi_2, Phi_3, b_1, b_2, b_3, nu) ...
 % -------------------------------------------------------------------
 
 
+% Defining the Parameters
+save_loc = './LomerLock/';
+nu = 0.317;
 
-% Definition of Parameters:
-save_loc = './LC/';
-nu = 0.347;
+N1 = [1; 1; 1] / norm([1;1;1]);
+N2 = [-1; -1; 1] / norm([-1; -1; 1]);
 
-N1 = [-1; -1; -1] / norm([-1;-1;-1]);
-N2 = [-1; 1; -1] / norm([-1; 1; -1]);
+B1 = 0.5 * [0; -1; 1];
+B2 = 0.5 * [-1; 1; 0];
+B3 = B1 + B2;
 
-B1 = [-1; 1; 0] / norm([-1; 1; 0]);
-B2 = [0; -1; -1] / norm([0; 1; 1]);
-B3 = [-1; 0; -1] / norm([1; 0; 1]);
+b1 = norm(B1);
+b2 = norm(B2);
+b3 = norm(B3);
 
-b1 = 1;
-b2 = 1;
-b3 = 1;
+B1 = B1 / b1;
+B2 = B2 / b2;
+B3 = B3 / b3;
 
 T_junc = cross(N1, N2);
-T_junc = T_junc / norm(T_junc);
+T_junc = -1 * T_junc / norm(T_junc);
 
 Phi1 = acos(dot(B1, T_junc)); % These are the angles between the burgers vector and the junction direction
 Phi2 = acos(dot(B2, T_junc));
 Phi3 = acos(dot(B3, T_junc));
-
-% Adjustments to the angles to impose specific handedness:
-Phi1 = Phi1;
-Phi2 = -1*Phi2;
-Phi3 = Phi3;
 
 
 % -------------------------------------------------------------------

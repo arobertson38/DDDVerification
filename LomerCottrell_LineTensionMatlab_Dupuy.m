@@ -2,7 +2,7 @@
 This is an implementation of the line tension model for predicting the critical
 angles to form symmetric dislocation junctions described by Dupuy and Fivel
 
-Implementation for a Hirth Lock
+Implementation for a Lomer Cotrell Lock
 %}
 
 clc; clear;
@@ -40,31 +40,33 @@ dfdTheta = @(Psi_c, Phi_1, Phi_2, Phi_3, b_1, b_2, b_3, nu) ...
 % -------------------------------------------------------------------
 
 
-% Defining the Parameters
-save_loc = './HirthLock/';
-nu = 0.317;
 
-N1 = [1; 1; 1] / norm([1;1;1]);
-N2 = [1; -1; 1] / norm([1; -1; 1]);
+% Definition of Parameters:
+save_loc = './LC/';
+nu = 0.347;
 
-B1 = 0.5 * [0; -1; 1];
-B2 = 0.5 * [0;  1; 1];
-B3 = B1 + B2;
+N1 = [-1; -1; -1] / norm([-1;-1;-1]);
+N2 = [-1; 1; -1] / norm([-1; 1; -1]);
 
-b1 = norm(B1);
-b2 = norm(B2);
-b3 = norm(B3);
+B1 = [-1; 1; 0] / norm([-1; 1; 0]);
+B2 = [0; -1; -1] / norm([0; 1; 1]);
+B3 = [-1; 0; -1] / norm([1; 0; 1]);
 
-B1 = B1 / b1;
-B2 = B2 / b2;
-B3 = B3 / b3;
+b1 = 1;
+b2 = 1;
+b3 = 1;
 
 T_junc = cross(N1, N2);
 T_junc = T_junc / norm(T_junc);
 
-Phi1 = -1*acos(dot(B1, T_junc)); % These are the angles between the burgers vector and the junction direction
+Phi1 = acos(dot(B1, T_junc)); % These are the angles between the burgers vector and the junction direction
 Phi2 = acos(dot(B2, T_junc));
 Phi3 = acos(dot(B3, T_junc));
+
+% Adjustments to the angles to impose specific handedness:
+Phi1 = Phi1;
+Phi2 = -1*Phi2;
+Phi3 = -1*Phi3;
 
 
 % -------------------------------------------------------------------
